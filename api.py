@@ -129,7 +129,7 @@ def process_omr(request_data: dict) -> dict:
             }
             
             logger.debug(f"Calling process_dir with args: {args}")
-            process_dir(
+            all_responses= process_dir(
                 root_dir=images_dir,
                 curr_dir=images_dir,
                 args=args,
@@ -138,11 +138,11 @@ def process_omr(request_data: dict) -> dict:
             )
             
             # Read and process results
-            results_file = output_dir / "Results" / "Results.csv"
-            if not results_file.exists():
-                error_msg = f"Results file not found at {results_file}"
-                logger.error(error_msg)
-                return {"error": error_msg}
+            # results_file = output_dir / "Results" / "Results.csv"
+            # if not results_file.exists():
+            #     error_msg = f"Results file not found at {results_file}"
+            #     logger.error(error_msg)
+            #     return {"error": error_msg}
                 
             logger.info("Successfully processed OMR sheets")
             
@@ -151,6 +151,7 @@ def process_omr(request_data: dict) -> dict:
             return {
                 "status": "success",
                 "request_dir": str(request_dir.relative_to(project_root)),
+                "responses":all_responses,
                 "message": "OMR processing completed successfully"
             }
             

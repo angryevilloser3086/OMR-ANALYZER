@@ -97,6 +97,8 @@ def process_dir(
 
     output_dir = Path(args["output_dir"], curr_dir.relative_to(root_dir))
     paths = Paths(output_dir)
+    logger.debug("output_dir", output_dir)
+    logger.debug("paths", paths)
 
     # look for images in current dir to process
     exts = ("*.[pP][nN][gG]", "*.[jJ][pP][gG]", "*.[jJ][pP][eE][gG]")
@@ -153,13 +155,14 @@ def process_dir(
         if args["setLayout"]:
             show_template_layouts(omr_files, template, tuning_config)
         else:
-            process_files(
+            all_responses = process_files(
                 omr_files,
                 template,
                 tuning_config,
                 evaluation_config,
                 outputs_namespace,
             )
+            return all_responses
 
     elif not subdirs:
         # Each subdirectory should have images or should be non-leaf
@@ -206,6 +209,7 @@ def process_files(
     start_time = int(time())
     files_counter = 0
     STATS.files_not_moved = 0
+    all_responses = []
 
     for file_path in omr_files:
         files_counter += 1
@@ -271,6 +275,7 @@ def process_files(
             or not evaluation_config.get_should_explain_scoring()
         ):
             logger.info(f"Read Response: \n{omr_response}")
+            all_responses.append(omr_response)
 
         score = 0
         if evaluation_config is not None:
@@ -333,6 +338,7 @@ def process_files(
             #     pass
 
     print_stats(start_time, files_counter, tuning_config)
+    return all_responses
 
 
 def check_and_move(error_code, file_path, filepath2):

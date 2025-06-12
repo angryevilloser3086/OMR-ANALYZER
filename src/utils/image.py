@@ -23,6 +23,7 @@ class ImageUtils:
     def save_img(path, final_marked):
         logger.info(f"Saving Image to '{path}'")
         cv2.imwrite(path, final_marked)
+        
 
     @staticmethod
     def resize_util(img, u_width, u_height=None):
