@@ -112,7 +112,7 @@ def process_omr(request_data: dict) -> dict:
 
         # 4. Process the OMR sheets
         logger.info("Starting OMR processing...")
-        output_dir = request_dir / "output"
+        output_dir = project_root / "outputs"/f"request_{timestamp}"
         output_dir.mkdir(exist_ok=True)
         
         try:
@@ -145,6 +145,13 @@ def process_omr(request_data: dict) -> dict:
             #     return {"error": error_msg}
                 
             logger.info("Successfully processed OMR sheets")
+            try:
+                import shutil
+                shutil.rmtree(request_dir)
+                logger.info(f"Successfully cleaned up input directory: {images_dir}")
+            except Exception as e:
+                logger.warning(f"Warning: Could not clean up input directory {images_dir}: {str(e)}")
+            
             
             # ... rest of your results processing code ...
             
