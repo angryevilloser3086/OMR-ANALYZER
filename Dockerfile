@@ -35,7 +35,8 @@ COPY . .
 
 # Create logs directory and set permissions
 RUN mkdir -p /app/logs && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app && \
+    chmod 755 /app/logs
 
 # Switch to non-root user
 USER appuser
