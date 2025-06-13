@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV FLASK_ENV=production
 ENV FLASK_APP=api.py
+ENV HEADLESS=true
 
 WORKDIR /app
 
@@ -21,8 +22,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user for security
-RUN useradd --create-home --shell /bin/bash appuser
-USER appuser
 # Copy requirements first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -34,11 +33,7 @@ RUN pip install --no-cache-dir flask gunicorn
 COPY . .
 
 # Create logs directory and set permissions
-RUN mkdir -p /app/logs && \
-    chmod 755 /app/logs
-
-# Switch to non-root user
-USER appuser
+RUN mkdir -p /app/logs 
 
 # Expose the port the app runs on
 EXPOSE 5000
