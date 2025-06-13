@@ -196,6 +196,25 @@ def process():
         logger.error(error_msg, exc_info=True)
         return jsonify({"error": "Internal server error"}), 500
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Docker health checks and monitoring"""
+    try:
+        # Add any specific health checks here (database connectivity, etc.)
+        return {
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'service': 'omr-analyzer'
+        }, 200
+    except Exception as e:
+        return {
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat(),
+            'service': 'omr-analyzer'
+        }, 500
+
+
 if __name__ == '__main__':
     logger.info("Starting OMR Checker API")
     app.run(debug=True, host='0.0.0.0', port=3001)

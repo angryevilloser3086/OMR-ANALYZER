@@ -1,12 +1,59 @@
-version: '3'
+version: '3.8'
 
 services:
   omrchecker-api:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: omrchecker-api
     ports:
       - "5000:5000"
     environment:
       - PORT=5000
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
     volumes:
       - ./logs:/app/logs
+      - ./data:/app/data  # For persistent data if needed
     restart: unless-stopped
+    
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits (optional)
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Add a debug container that you can exec into
+  debug-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: omrchecker-debug
+    profiles: ["debug"]  # Only starts when explicitly requested
+    command: ["sleep", "infinity"]  # Keep container running
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - .:/app/src  # Mount source code for live debugging
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
