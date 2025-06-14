@@ -8,3 +8,4 @@ rich>=13.4.2
 screeninfo>=0.8.1
 google-cloud-storage
 gunicorn>=20.0.0
+opencv-python
